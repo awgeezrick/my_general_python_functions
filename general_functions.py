@@ -544,3 +544,49 @@ def optimize_df(df):
     df[df.select_dtypes(['float64']).columns] = df.select_dtypes(['float64']).apply(lambda x: x.astype('float32'))
     df[df.select_dtypes(['object']).columns] = df.select_dtypes(['object']).apply(lambda x: x.astype('category'))
     return
+
+def create_project_folder(dir):
+    from pathlib import Path
+    p = Path(dir)
+    p.mkdir(exist_ok=True)
+    return print('Project folder created')
+
+def get_date_filtered(df,date_col,start_date,end_date):
+    filter1 = df[date_col] >= start_date
+    filter2 = df[date_col] <= end_date
+
+    df_final = df[filter1 & filter2]
+
+    return df_final
+
+def setdiff_sorted(array1,array2,assume_unique=False):
+    ans = np.setdiff1d(array1,array2,assume_unique).tolist()
+    if assume_unique:
+        return sorted(ans)
+    return ans
+
+def convert_string_datetime_to_date(df,col):
+    df[col] = pd.to_datetime(df[col], format='%Y-%m-%d %H:%M:%S', errors='coerce')
+    df[col] = df[col].dt.normalize()
+    return df
+
+def format_datetime_objects_to_just_date(df):
+    df[df.select_dtypes(['datetime64']).columns] = df.select_dtypes(['datetime64']).apply(lambda x: x.dt.normalize())
+    return df
+
+def convert_string_datetime_to_datetime(df,col):
+    df[col] = pd.to_datetime(df[col], format='%Y-%m-%d %H:%M:%S', errors='coerce')    
+    return df
+
+
+def delete_filetype_from_folder(folder_path,file_ext):
+    import os
+    folder_files = os.listdir(folder_path)
+
+    for item in folder_files:
+        if item.endswith(file_ext):
+            os.remove(os.path.join(folder_path, item))
+
+    return print(file_ext + ' files removed from folder')
+
+
